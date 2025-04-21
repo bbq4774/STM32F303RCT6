@@ -16,21 +16,15 @@ void CreateEC600Task(void) {
 void Module_EC600_Task(void const *argument) {
 	extern UART_HandleTypeDef huart1;
 	extern UART_HandleTypeDef huart3;
-	uint8_t buf[BUF_SIZE] = {0};
 	
 	//Turn on ModuleSim
 	Power_On();  
 	
 	//Sent AT cmd
-	Send_AT(&huart3, buf);
+	Send_AT(&huart3);
 	
-	uint8_t cmd[] = "AT+CGSN\r\n";
-	//Send cmd to get IMEI
-	Send_cmd(&huart3, cmd, sizeof(cmd) - 1, buf);
+	Get_IMEI(&huart3);
 	
-	uint8_t dat[] = "IMEI : ";
-	HAL_UART_Transmit(&huart1, dat, sizeof(dat) - 1, 100);
-	Process_Data_EC600_IMEI(&huart1, buf, BUF_SIZE);
 	while (1) {
 		
 		osDelay(10);
@@ -61,10 +55,13 @@ void Process_Data_EC600_IMEI(UART_HandleTypeDef *huart, uint8_t *buf, uint8_t si
 	HAL_UART_Transmit(huart, dat, sizeof(dat) - 1, 100);
 }
 
-void Send_AT(UART_HandleTypeDef *huart, uint8_t *buf) {
+void Send_AT(UART_HandleTypeDef *huart) {
+	uint8_t buf[BUF_SIZE] = {0};
 	uint8_t at[] = "AT\r\n";
+	
 	HAL_UART_Transmit(huart, at, sizeof(at) - 1, 100);
-	HAL_UART_Receive_DMA(huart, buf, BUF_SIZE); 
+	HAL_UART_Receive_DMA(huart, buf, BUF_SIZE);
+	
 	while (1) {     
 		if (strstr((char *)buf, "RDY") != NULL) {
 			HAL_UART_DMAStop(huart);
@@ -80,4 +77,17 @@ void Send_cmd(UART_HandleTypeDef *huart, uint8_t *cmd, uint8_t size_cmd, uint8_t
 	HAL_UART_Receive_DMA(huart, buf, BUF_SIZE);
 	osDelay(500);
 	HAL_UART_DMAStop(huart);
+}
+
+void Get_IMEI(UART_HandleTypeDef *huart) {
+	extern UART_HandleTypeDef huart1;
+	uint8_t buf[BUF_SIZE] = {0};
+	
+	//Send cmd to get IMEI
+	uint8_t cmd[] = "AT+CGSN\r\n";
+	Send_cmd(huart, cmd, sizeof(cmd) - 1, buf);
+	
+	uint8_t dat[] = "IMEI : ";
+	HAL_UART_Transmit(&huart1, dat, sizeof(dat) - 1, 100);
+	Process_Data_EC600_IMEI(&huart1, buf, BUF_SIZE);
 }

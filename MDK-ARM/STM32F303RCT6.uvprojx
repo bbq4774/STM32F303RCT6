@@ -556,6 +556,11 @@
                 </FileArmAds>
               </FileOption>
             </File>
+            <File>
+              <FileName>HAL_UART_Callback.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\HAL_UART_Callback.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

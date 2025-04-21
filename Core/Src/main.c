@@ -27,6 +27,7 @@
 #include "Flash_Task.h"
 #include "GPS_GNSS.h"
 #include "ModuleEC600.h"
+#include "HAL_UART_Callback.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -138,10 +139,10 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   CreateBlynkTask();
-  //CreateUARTTask();
+  CreateUARTTask();
   CreateFlashTask();
-  //CreateGPSTask();
-  //CreateEC600Task();
+  CreateGPSTask();
+  CreateEC600Task();
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */

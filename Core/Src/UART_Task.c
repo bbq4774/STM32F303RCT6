@@ -1,11 +1,8 @@
 #include "uart_task.h"
 
-// Buffer variables
-uint8_t rx_buffer[RX_BUFFER_SIZE];
-
 // Function to create the UART task
 void CreateUARTTask(void) {
-	osThreadDef(UART, UART_Task, osPriorityBelowNormal, 0, 128);
+	osThreadDef(UART, UART_Task, osPriorityBelowNormal, 0, 512);
 	osThreadId uartTaskHandle = osThreadCreate(osThread(UART), NULL);
 	
 	if (uartTaskHandle == NULL) {
@@ -21,6 +18,9 @@ void UART_Task(void const *argument) {
 	// Declare huart1 to be used in uart_task.c
 	extern UART_HandleTypeDef huart1;
 	
+	// Buffer variables
+	uint8_t rx_buffer[RX_BUFFER_SIZE];
+	
 	//Count time and size variables
 	uint32_t lastRxTime = 0;
 	uint32_t currentTime = 0;
@@ -29,17 +29,18 @@ void UART_Task(void const *argument) {
 	//Start DMA
 	HAL_UART_Receive_DMA(&huart1, rx_buffer, RX_BUFFER_SIZE);
 	
-	while (1) {
+	while (1) {   
 		if (Check_Have_Data(&lastRxTime, &currentTime, &prev_received_size)) {
-			Process_Data(prev_received_size);
+			Process_Data(&huart1, rx_buffer, prev_received_size);
 			
+			//Reset pointer of DMA 
 			HAL_UART_DMAStop(&huart1);
 			HAL_UART_Receive_DMA(&huart1, rx_buffer, RX_BUFFER_SIZE);
 			
 			prev_received_size = 0;
 		}
 		
-		osDelay(10);
+		osDelay(100);
 	}
 }
 
@@ -60,11 +61,11 @@ int Check_Have_Data(uint32_t *lastRxTime, uint32_t *currentTime, uint16_t *prev_
     return 0;
 }
 
-void Process_Data(uint16_t rx_size) {
+void Process_Data(UART_HandleTypeDef *huart, uint8_t *rx_buffer, uint16_t rx_size) {
 	uint8_t start = 0;
 	uint8_t end = 0;
 	uint16_t tx_size = 0;
-	uint8_t tx_buffer[TX_BUFFER_SIZE];
+	uint8_t tx_buffer[TX_BUFFER_SIZE] = {0};
 	
     tx_buffer[tx_size++] = '$';
     for (uint16_t i = 0; i < rx_size; ++i) {
@@ -98,13 +99,12 @@ void Process_Data(uint16_t rx_size) {
         }
     }
     
-	extern UART_HandleTypeDef huart1;
     // Complete the message
     if (tx_size > 1) { // Only if we have data
         tx_buffer[tx_size - 1] = '#';
-        HAL_UART_Transmit(&huart1, tx_buffer, tx_size, HAL_MAX_DELAY);
+        HAL_UART_Transmit(huart, tx_buffer, tx_size, HAL_MAX_DELAY);
     }
-    
+		
     // Reset buffers
     tx_size = 0;
 }

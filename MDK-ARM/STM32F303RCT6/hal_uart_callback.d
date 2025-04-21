@@ -1,4 +1,5 @@
-stm32f303rct6/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
+stm32f303rct6/hal_uart_callback.o: ..\Core\Src\HAL_UART_Callback.c \
+  ..\Core\Inc\HAL_UART_Callback.h \
   ..\Drivers\STM32F3xx_HAL_Driver\Inc\stm32f3xx_hal.h \
   ..\Core\Inc\stm32f3xx_hal_conf.h \
   ..\Drivers\STM32F3xx_HAL_Driver\Inc\stm32f3xx_hal_rcc.h \
@@ -35,6 +36,7 @@ stm32f303rct6/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32F3xx_HAL_Driver\Inc\stm32f3xx_hal_tim_ex.h \
   ..\Drivers\STM32F3xx_HAL_Driver\Inc\stm32f3xx_hal_uart.h \
   ..\Drivers\STM32F3xx_HAL_Driver\Inc\stm32f3xx_hal_uart_ex.h \
+  ..\Core\Inc\GPS_GNSS.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
   ..\Core\Inc\FreeRTOSConfig.h \
@@ -48,9 +50,4 @@ stm32f303rct6/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\timers.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\queue.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h \
-  ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h \
-  ..\Core\Inc\Blynk_Task.h ..\Core\Inc\UART_Task.h \
-  ..\Core\Inc\Flash_Task.h ..\Core\Inc\W25Q128.h \
-  C:\Keil_v5\ARM\ARMCLANG\include\stdio.h ..\Core\Inc\GPS_GNSS.h \
-  ..\Core\Inc\ModuleEC600.h C:\Keil_v5\ARM\ARMCLANG\include\string.h \
-  ..\Core\Inc\HAL_UART_Callback.h
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h
